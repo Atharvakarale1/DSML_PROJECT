@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Comparison</title>
+    <link rel="stylesheet" href="../static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Model Comparison</h1>
+        
+        <div id="chartContainer" style="width: 100%; height: 400px;">
+            <canvas id="accuracyChart"></canvas>
+        </div>
+
+        <div>
+            <h2>Model Accuracies</h2>
+            <ul>
+                {% for model, accuracy in accuracies.items() %}
+                    <li>{{ model }}: {{ accuracy }}%</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <button onclick="window.location.href='/'">Go Back</button>
+    </div>
+
+    <script>
+        const accuraciesData = '{{ accuracies | tojson | safe }}';
+        const modelAccuracies = JSON.parse(accuraciesData);
+
+        window.onload = function() {
+            const ctx = document.getElementById('accuracyChart').getContext('2d');
+            const labels = Object.keys(modelAccuracies);
+            const data = {
+                labels: labels,
+                datasets: [{
+                    label: 'Model Accuracies',
+                    data: Object.values(modelAccuracies),
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            };
+
+            const config = {
+                type: 'bar',
+                data: data,
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Accuracy (%)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Models'
+                            }
+                        }
+                    }
+                }
+            };
+
+            new Chart(ctx, config);
+        };
+    </script>
+</body>
+</html>
+
+
+

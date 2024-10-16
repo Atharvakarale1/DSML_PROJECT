@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Prediction</title>
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Crop Recommendation System</h1>
+        <h2>Best Model: {{ best_model }}</h2>
+        <h3>Accuracy: {{ accuracy }}%</h3>
+        
+        <h3>Input Data for Prediction</h3>
+        <form id="predictionForm">
+            <input type="number" id="N" step="any" placeholder="Nitrogen (N)" required>
+            <input type="number" id="P" step="any" placeholder="Phosphorus (P)" required>
+            <input type="number" id="K" step="any" placeholder="Potassium (K)" required>
+            <input type="number" id="temperature" step="any" placeholder="Temperature" required>
+            <input type="number" id="humidity" step="any" placeholder="Humidity" required>
+            <input type="number" id="ph" step="any" placeholder="pH" required>
+            <input type="number" id="rainfall" step="any" placeholder="Rainfall" required>
+            <button type="submit">Predict</button>
+        </form>
+
+        <h3 id="result"></h3>
+        
+        <button onclick="window.location.href='/model_comparison'">Go to Model Comparison</button>
+    </div>
+
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const data = {
+                N: parseFloat(document.getElementById('N').value),
+                P: parseFloat(document.getElementById('P').value),
+                K: parseFloat(document.getElementById('K').value),
+                temperature: parseFloat(document.getElementById('temperature').value),
+                humidity: parseFloat(document.getElementById('humidity').value),
+                ph: parseFloat(document.getElementById('ph').value),
+                rainfall: parseFloat(document.getElementById('rainfall').value)
+            };
+
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('result').innerText = `Error: ${data.error}`;
+                } else {
+                    document.getElementById('result').innerText = `Predicted Crop: ${data.crop}`;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
