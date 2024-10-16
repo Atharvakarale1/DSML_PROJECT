@@ -1,0 +1,5 @@
+Logistic Regression: 96.3636
+Random Forest: 99.3182
+Gradient Boosting: 98.1818
+Support Vector Classifier: 97.7273
+K-Nearest Neighbors: 96.8182
